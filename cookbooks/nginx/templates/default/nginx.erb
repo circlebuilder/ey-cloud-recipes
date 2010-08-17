@@ -1,20 +1,9 @@
-
 server {
-  listen 81;
-  server_name catalogchoice.org;  
-  
-  <%- if @framework_env == 'production' %>
-    if ($host != "www.catalogchoice.org") {
-      rewrite ^/(.*) http://www.catalogchoice.org/$1 permanent;
-    }
+  listen 80;
 
-  <%- else %>
-    # not redirecting for <%= @framework_env%> environment
-    # if ($host != "www.catalogchoice.org") {
-    #   rewrite ^/(.*) http://www.catalogchoice.org/$1 permanent;
-    # }
-  <%- end %>
-  
+  server_name _;
+
+
   client_max_body_size 100M;
 
   root /data/<%= @app_name %>/current/public;
@@ -25,7 +14,7 @@ server {
 
   passenger_enabled on;
 
-  rails_env <%= @framework_env %>;
+  rails_env production;
 
   include /etc/nginx/servers/<%= @app_name %>.rewrites;
 
@@ -51,10 +40,10 @@ server {
 
   error_page 404 /404.html;
   error_page 500 502 504 /500.html;
-          
+
   error_page 503 @503;
   location @503 {
     rewrite  ^(.*)$  /system/maintenance.html break;
-  }     
+  }
 
 }
